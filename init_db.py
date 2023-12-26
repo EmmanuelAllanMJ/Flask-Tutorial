@@ -1,20 +1,22 @@
 import sqlite3
 
-connection = sqlite3.connect('database.db')
+def init_db():
+    connection = sqlite3.connect('database.db')
 
+    cur = connection.cursor()
 
-with open('schema.sql') as f:
-    connection.executescript(f.read())
+    cur.execute("CREATE TABLE posts (id INTEGER PRIMARY KEY AUTOINCREMENT, created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, title TEXT NOT NULL, content TEXT NOT NULL)")
 
-cur = connection.cursor()
+    cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
+                ('First Post', 'Content for the first post')
+                )
 
-cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
-            ('First Post', 'Content for the first post')
-            )
+    cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
+                ('Second Post', 'Content for the second post')
+                )
 
-cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
-            ('Second Post', 'Content for the second post')
-            )
+    connection.commit()
+    connection.close()
 
-connection.commit()
-connection.close()
+if __name__ == "__main__":
+    init_db()
